@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ep-broad-shadow-agy7uj1a-pooler.c-2.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require
+    username: neondb_owner
+    password: npg_NgT7WQsl8yRO
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: debug
+    org.example.astonlearn.service: trace
+  file:
+    name: logs/dev.log
+  pattern:
+    console: "%d{dd HH:mm:ss} %-5level %logger{30} - %msg%n"
+
+
+
+
+
+
+
+
+
+
+
