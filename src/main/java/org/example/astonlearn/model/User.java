@@ -3,6 +3,7 @@ package org.example.astonlearn.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.mapstruct.Mapper;
 
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "users")
+@Mapper(componentModel = "spring")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sq")
