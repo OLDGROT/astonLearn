@@ -8,6 +8,7 @@ import org.example.astonlearn.model.Role;
 import org.example.astonlearn.model.User;
 import org.example.astonlearn.repository.RoleRepository;
 import org.example.astonlearn.repository.UserRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public List<UserDto> getAllUsers() {
         log.info("Запрос на получение списка всех пользователей");
@@ -44,6 +46,7 @@ public class UserService {
         userRepository.save(user);
 
         log.info("Пользователь '{}' успешно создан с ролью '{}'", user.getUsername(), role.getName());
+        kafkaTemplate.send("user-create", user.getId().toString());
         return userMapper.toDto(user);
     }
 
@@ -74,6 +77,7 @@ public class UserService {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             log.info("Пользователь с id {} успешно удалён", id);
+            kafkaTemplate.send("user-delete", id.toString());
         } else {
             log.warn("Попытка удалить несуществующего пользователя с id {}", id);
         }
