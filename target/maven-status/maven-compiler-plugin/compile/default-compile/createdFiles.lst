@@ -1,0 +1,12 @@
+org\example\astonlearn\model\User.class
+org\example\astonlearn\dto\UserDto.class
+org\example\astonlearn\UserServiceApplication.class
+org\example\astonlearn\model\Role$RoleBuilder.class
+org\example\astonlearn\mapper\UserMapper.class
+org\example\astonlearn\controller\UserController.class
+org\example\astonlearn\repository\RoleRepository.class
+org\example\astonlearn\repository\UserRepository.class
+org\example\astonlearn\service\UserService.class
+org\example\astonlearn\dto\UserDto$UserDtoBuilder.class
+org\example\astonlearn\model\User$UserBuilder.class
+org\example\astonlearn\model\Role.class
