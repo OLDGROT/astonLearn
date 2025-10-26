@@ -2,14 +2,13 @@ package org.example.astonlearn.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.astonlearn.config.UserEventProducer;
+import org.example.astonlearn.kafka.UserEventProducer;
 import org.example.astonlearn.dto.UserDto;
 import org.example.astonlearn.mapper.UserMapper;
 import org.example.astonlearn.model.Role;
 import org.example.astonlearn.model.User;
 import org.example.astonlearn.repository.RoleRepository;
 import org.example.astonlearn.repository.UserRepository;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +36,9 @@ public class UserService {
     public UserDto createUser(UserDto dto) {
         log.info("Создание нового пользователя с email: {}", dto.getEmail());
 
-        Role role = roleRepository.findByName(dto.getRoleName())
+        Role role = roleRepository.findByName(dto.getRole())
                 .orElseThrow(() -> {
-                    log.error("Роль '{}' не найдена при создании пользователя", dto.getRoleName());
+                    log.error("Роль '{}' не найдена при создании пользователя", dto.getRole());
                     return new RuntimeException("Роль не найдена");
                 });
 
@@ -60,9 +59,9 @@ public class UserService {
                     return new RuntimeException("Пользователь не найден");
                 });
 
-        Role role = roleRepository.findByName(dto.getRoleName())
+        Role role = roleRepository.findByName(dto.getRole())
                 .orElseThrow(() -> {
-                    log.error("Роль '{}' не найдена при обновлении пользователя", dto.getRoleName());
+                    log.error("Роль '{}' не найдена при обновлении пользователя", dto.getRole());
                     return new RuntimeException("Роль не найдена");
                 });
 

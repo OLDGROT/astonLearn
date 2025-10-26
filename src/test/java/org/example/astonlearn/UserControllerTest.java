@@ -3,12 +3,12 @@ package org.example.astonlearn;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.astonlearn.controller.UserController;
 import org.example.astonlearn.dto.UserDto;
+import org.example.astonlearn.hateos.UserModelAssembler;
 import org.example.astonlearn.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +30,9 @@ class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean
+    private UserModelAssembler userModelAssembler;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -45,13 +48,13 @@ class UserControllerTest {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].username").value("Alice"))
-                .andExpect(jsonPath("$[1].roleName").value("USER"));
+                .andExpect(jsonPath("$._embedded.users[0].username").value("Alice"))
+                .andExpect(jsonPath("$._embedded.users[0].role").value("ADMIN"));
     }
 
     @Test
     void createUser_returnsCreatedUser() throws Exception {
-        UserDto request = new UserDto(null, "Charlie", "charlie@mail.com", (byte) 22, "USER");
+        UserDto request = new UserDto(null, "Charlie", "charlie@mail.com", (byte) 22, "ADMIN");
         UserDto saved = new UserDto(3L, "Charlie", "charlie@mail.com", (byte) 22, "USER");
 
         Mockito.when(userService.createUser(any(UserDto.class))).thenReturn(saved);
@@ -67,7 +70,7 @@ class UserControllerTest {
     @Test
     void updateUser_returnsUpdatedUser() throws Exception {
         UserDto request = new UserDto(null, "AliceUpdated", "alice_updated@mail.com", (byte) 23, "ADMIN");
-        UserDto updated = new UserDto(1L, "AliceUpdated", "alice_updated@mail.com", (byte) 23, "ADMIN");
+        UserDto updated = new UserDto(1L, "AliceUpdated", "alice_updated@mail.com", (byte) 23, "USER");
 
         Mockito.when(userService.updateUser(eq(1L), any(UserDto.class))).thenReturn(updated);
 

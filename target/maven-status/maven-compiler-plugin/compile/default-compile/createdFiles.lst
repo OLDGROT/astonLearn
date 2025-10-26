@@ -3,10 +3,16 @@ org\example\astonlearn\dto\UserDto.class
 org\example\astonlearn\UserServiceApplication.class
 org\example\astonlearn\model\Role$RoleBuilder.class
 org\example\astonlearn\mapper\UserMapper.class
+org\example\astonlearn\model\UserImpl.class
+org\example\astonlearn\config\KafkaTopicConfig.class
 org\example\astonlearn\controller\UserController.class
+org\example\astonlearn\hateos\UserModelAssembler.class
 org\example\astonlearn\repository\RoleRepository.class
+org\example\astonlearn\mapper\UserMapperImpl.class
 org\example\astonlearn\repository\UserRepository.class
 org\example\astonlearn\service\UserService.class
-org\example\astonlearn\dto\UserDto$UserDtoBuilder.class
+org\example\astonlearn\kafka\UserEventerKafka.class
+org\example\astonlearn\kafka\UserEventProducer.class
+org\example\astonlearn\config\KafkaProducerConfig.class
 org\example\astonlearn\model\User$UserBuilder.class
 org\example\astonlearn\model\Role.class

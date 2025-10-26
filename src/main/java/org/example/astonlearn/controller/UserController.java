@@ -1,51 +1,88 @@
 package org.example.astonlearn.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.astonlearn.dto.UserDto;
+import org.example.astonlearn.hateos.UserModelAssembler;
 import org.example.astonlearn.service.UserService;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
+@Tag(name = "User API", description = "Операции с пользователями")
 public class UserController {
 
     private final UserService userService;
+    private final UserModelAssembler assembler;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAll() {
+    @Operation(summary = "Получить всех пользователей")
+    @ApiResponse(responseCode = "200", description = "Список пользователей получен")
+    public ResponseEntity<CollectionModel<EntityModel<UserDto>>> getAll() {
         log.info("Получен запрос на получение всех пользователей");
-        List<UserDto> users = userService.getAllUsers();
-        log.info("Возвращено {} пользователей", users.size());
-        return ResponseEntity.ok(users);
+
+        List<EntityModel<UserDto>> users = userService.getAllUsers().stream()
+                .map(user -> EntityModel.of(user,
+                        linkTo(methodOn(UserController.class).getAll()).withSelfRel()))
+                .toList();
+
+        return ResponseEntity.ok(
+                CollectionModel.of(users,
+                        linkTo(methodOn(UserController.class).getAll()).withSelfRel())
+        );
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto dto) {
-        log.info("Получен запрос на создание пользователя с email: {}", dto.getEmail());
+    @Operation(summary = "Создать нового пользователя")
+    @ApiResponse(responseCode = "200", description = "Пользователь успешно создан")
+    public ResponseEntity<EntityModel<UserDto>> create(@RequestBody UserDto dto) {
+        log.info("Создание пользователя с email: {}", dto.getEmail());
         UserDto created = userService.createUser(dto);
-        log.info("Пользователь '{}' успешно создан с ролью '{}'", created.getUsername(), created.getRoleName());
-        return ResponseEntity.ok(created);
+
+        EntityModel<UserDto> model = EntityModel.of(
+                created,
+                linkTo(methodOn(UserController.class).getAll()).withRel("all-users")
+        );
+
+        return ResponseEntity.ok(model);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto dto) {
-        log.info("Получен запрос на обновление пользователя с id: {}", id);
+    @Operation(summary = "Обновить пользователя")
+    @ApiResponse(responseCode = "200", description = "Пользователь обновлён")
+    public ResponseEntity<EntityModel<UserDto>> update(
+            @PathVariable Long id,
+            @RequestBody UserDto dto) {
+
+        log.info("Обновление пользователя с id: {}", id);
         UserDto updated = userService.updateUser(id, dto);
-        log.info("Пользователь с id {} успешно обновлён", id);
-        return ResponseEntity.ok(updated);
+
+        EntityModel<UserDto> model = EntityModel.of(
+                updated,
+                linkTo(methodOn(UserController.class).getAll()).withRel("all-users")
+        );
+
+        return ResponseEntity.ok(model);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить пользователя")
+    @ApiResponse(responseCode = "204", description = "Пользователь удалён")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Получен запрос на удаление пользователя с id: {}", id);
+        log.info("Удаление пользователя с id: {}", id);
         userService.deleteUser(id);
-        log.info("Пользователь с id {} успешно удалён", id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -6,18 +6,11 @@ import org.springframework.kafka.config.TopicBuilder;
 
 public class KafkaTopicConfig {
     @Bean
-    public NewTopic userDeleteTopic() {
-        return TopicBuilder.name("user-delete")
+    public NewTopic userTopic(String topicName) {
+        return TopicBuilder.name(topicName)
                 .partitions(1)
                 .replicas(1)
                 .build();
     }
 
-    @Bean
-    public NewTopic userCreateTopic() {
-        return TopicBuilder.name("user-create")
-                .partitions(1)
-                .replicas(1)
-                .build();
-    }
 }
