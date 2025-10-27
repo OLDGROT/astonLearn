@@ -3,6 +3,8 @@ spring:
     name: "astonLearn"
   profiles:
     active: dev
+  jmx:
+    enabled: false
 
 app:
   kafka:

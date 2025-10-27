@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     properties:
       hibernate:
@@ -19,7 +20,7 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
-  port: 8080
+  port: 8081
 
 logging:
   level:

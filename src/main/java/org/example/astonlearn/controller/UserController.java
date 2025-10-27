@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.astonlearn.dto.UserDto;
 import org.example.astonlearn.hateos.UserModelAssembler;
+import org.example.astonlearn.kafka.UserEventProducer;
+import org.example.astonlearn.kafka.UserEventerKafka;
 import org.example.astonlearn.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -26,8 +28,9 @@ public class UserController {
 
     private final UserService userService;
     private final UserModelAssembler assembler;
+    private final UserEventerKafka producer;
 
-    @GetMapping
+    @GetMapping(name = "/getUsers")
     @Operation(summary = "Получить всех пользователей")
     @ApiResponse(responseCode = "200", description = "Список пользователей получен")
     public ResponseEntity<CollectionModel<EntityModel<UserDto>>> getAll() {
@@ -50,6 +53,7 @@ public class UserController {
     public ResponseEntity<EntityModel<UserDto>> create(@RequestBody UserDto dto) {
         log.info("Создание пользователя с email: {}", dto.getEmail());
         UserDto created = userService.createUser(dto);
+        producer.sendUserCreate(dto.getId());
 
         EntityModel<UserDto> model = EntityModel.of(
                 created,
